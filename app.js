@@ -2,11 +2,15 @@
 
 // ############# Requires ###############
 var fs = require('fs');
+var sudoku = require('./sudoku.js');
 
 // ############# Global vars ############
 var input_file_path = "";
 
 // ############# Main code ##############
+console.log(sudoku.stuff);
+sudoku.secretExposed();
+
 if (process.argv.length === 3) {
     input_file_path = process.argv[2];
 } else {
