@@ -8,8 +8,6 @@ var sudoku = require('./sudoku.js');
 var input_file_path = "";
 
 // ############# Main code ##############
-console.log(sudoku.stuff);
-sudoku.secretExposed();
 
 if (process.argv.length === 3) {
     input_file_path = process.argv[2];
@@ -30,7 +28,10 @@ fs.readFile(input_file_path, 'utf8', (err, data) => {
         process.exit(1);
     }
     var grid = rows.map(rowStringToArray);
-    console.log(grid);
+    var sudokuProblem = sudoku(grid);
+
+    sudokuProblem.print();
+    sudokuProblem.solve();
 
 });
 
