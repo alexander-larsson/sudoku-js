@@ -32,6 +32,7 @@ fs.readFile(input_file_path, 'utf8', (err, data) => {
 
     sudokuProblem.print();
     sudokuProblem.solve();
+    sudokuProblem.print();
 
 });
 
