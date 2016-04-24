@@ -30,9 +30,15 @@ fs.readFile(input_file_path, 'utf8', (err, data) => {
     var grid = rows.map(rowStringToArray);
     var sudokuProblem = sudoku(grid);
 
-    sudokuProblem.print();
-    sudokuProblem.solve();
-    sudokuProblem.print();
+    console.log("Original sudoku: ");
+    sudokuProblem.printOriginal();
+    //console.time("solve");
+    var unique = sudokuProblem.solveAndVerifyUniqueSolution();
+    //console.timeEnd("solve");
+    console.log("Solved sudoku: ");
+    sudokuProblem.printSolution();
+    console.log("Unique solution: " + (unique ? "yes" : "no"));
+    console.log("Difficulty: " + sudokuProblem.difficulty());
 
 });
 
