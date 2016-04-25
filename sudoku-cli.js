@@ -28,12 +28,11 @@ fs.readFile(input_file_path, 'utf8', function(err, data) {
         process.exit(1);
     }
     var grid = rows.map(rowStringToArray);
-    var sudokuProblem = sudoku(grid);
 
     console.log("Original sudoku: ");
     printSudokuGrid(grid);
     console.time("solve");
-    var result = sudokuProblem.solveAndVerifyUniqueSolution();
+    var result = sudoku.solveAndVerifyUniqueSolution(grid);
     console.timeEnd("solve");
     console.log("Solved sudoku: ");
     printSudokuGrid(result.solution);

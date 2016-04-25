@@ -1,5 +1,5 @@
 "use strict";
-module.exports = function Sudoku(sudokuGrid) {
+module.exports = (function Sudoku() {
 
     // Private variables
     var sudokuSize = 9;
@@ -50,7 +50,7 @@ module.exports = function Sudoku(sudokuGrid) {
 
         for (var i = squareCornerRow; i < squareCornerRow + squareSize; i++) {
             for (var j = squareCornerColumn; j < squareCornerColumn + squareSize; j++) {
-                if (sudokuGrid[i][j] === value) {
+                if (grid[i][j] === value) {
                     return false;
                 }
             }
@@ -73,7 +73,7 @@ module.exports = function Sudoku(sudokuGrid) {
     var solveNext = function(grid, row, column, requiredSulutions) {
         if (column === (sudokuSize - 1) && row === (sudokuSize - 1)) {
             // A solution has been found.
-            sudokuSolution = copyMatrix(sudokuGrid);
+            sudokuSolution = copyMatrix(grid);
             foundSolutions++;
             return;
         }
@@ -87,7 +87,7 @@ module.exports = function Sudoku(sudokuGrid) {
     }
 
     var solveRecursion = function(grid, row, column, requiredSulutions) {
-        if (sudokuGrid[row][column] !== 0) {
+        if (grid[row][column] !== 0) {
             // The value on this position on the grid is given, move on.
             solveNext(grid, row, column, requiredSulutions);
         } else {
@@ -95,7 +95,7 @@ module.exports = function Sudoku(sudokuGrid) {
             // found, find a suitable value.
             for (var val = 1; val <= sudokuSize; val++) {
                 if (checkGrid(grid, val, row, column) && foundSolutions < requiredSulutions) {
-                    sudokuGrid[row][column] = val;
+                    grid[row][column] = val;
                     solveNext(grid, row, column, requiredSulutions);
                     if (foundSolutions < 1) {
                         backtracks++;
@@ -103,7 +103,7 @@ module.exports = function Sudoku(sudokuGrid) {
                 }
             }
             // Algortihm is backtracking, reset the value on this position to 0.
-            sudokuGrid[row][column] = 0;
+            grid[row][column] = 0;
         }
     };
 
@@ -121,11 +121,11 @@ module.exports = function Sudoku(sudokuGrid) {
 
     // Public functions
     return {
-        solve: function() {
+        solve: function(sudokuGrid) {
             solveRecursion(sudokuGrid, 0, 0, 1);
             var result;
-            if(sudokuSolution === undefined) {
-              result = {};
+            if(!sudokuSolution) {
+              result = null;
             } else {
               result = {
                 solution: copyMatrix(sudokuSolution),
@@ -134,14 +134,14 @@ module.exports = function Sudoku(sudokuGrid) {
             }
             foundSolutions = 0;
             backtracks = 0;
-            sudokuSolution = undefined;
+            sudokuSolution = null;
             return result;
         },
-        solveAndVerifyUniqueSolution: function() {
+        solveAndVerifyUniqueSolution: function(sudokuGrid) {
             solveRecursion(sudokuGrid, 0, 0, 2);
             var result;
-            if(sudokuSolution === undefined) {
-              result = {};
+            if(!sudokuSolution) {
+              result = null;
             } else {
               var result = {
                 solution: copyMatrix(sudokuSolution),
@@ -151,8 +151,11 @@ module.exports = function Sudoku(sudokuGrid) {
             }
             foundSolutions = 0;
             backtracks = 0;
-            sudokuSolution = undefined;
+            sudokuSolution = null;
             return result;
+        },
+        generate: function(){
+          return "stuff";
         }
     };
-};
+})();
