@@ -35,30 +35,27 @@ module.exports = function Sudoku(sudokuGrid) {
     }
 
     var copyMatrix = function(matrixToCopy) {
-        return matrixToCopy.map((row) => {
+        return matrixToCopy.map(function(row) {
             return row.slice();
         });
     }
 
-    // Checks if 'value' occurs in 'array'
-    var checkArray = function(array, value) {
-        return array.reduce((previous, current) => {
-            return previous ? true : current === value;
-        }, false);
-    }
-
     var checkRow = function(grid, value, row) {
-        var rowToCheck = grid[row];
-        var valueExists = checkArray(rowToCheck, value);
-        return !valueExists;
+        for (var i = 0; i < sudokuSize; i++) {
+          if(grid[row][i] === value) {
+            return false;
+          }
+        }
+        return true;
     };
 
     var checkColumn = function(grid, value, column) {
-        var columnToCheck = grid.map((row) => {
-            return row[column];
-        });
-        var valueExists = checkArray(columnToCheck, value);
-        return !valueExists;
+      for (var i = 0; i < sudokuSize; i++) {
+        if(grid[i][column] === value) {
+          return false;
+        }
+      }
+      return true;
     };
 
     var checkSquare = function(grid, value, row, column) {

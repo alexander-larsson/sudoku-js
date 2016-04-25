@@ -16,7 +16,7 @@ if (process.argv.length === 3) {
     process.exit(1);
 }
 
-fs.readFile(input_file_path, 'utf8', (err, data) => {
+fs.readFile(input_file_path, 'utf8', function(err, data) {
     if (err) {
         console.log(err.stack);
         process.exit(1);
@@ -32,9 +32,9 @@ fs.readFile(input_file_path, 'utf8', (err, data) => {
 
     console.log("Original sudoku: ");
     sudokuProblem.printOriginal();
-    //console.time("solve");
+    console.time("solve");
     var unique = sudokuProblem.solveAndVerifyUniqueSolution();
-    //console.timeEnd("solve");
+    console.timeEnd("solve");
     console.log("Solved sudoku: ");
     sudokuProblem.printSolution();
     console.log("Unique solution: " + (unique ? "yes" : "no"));
