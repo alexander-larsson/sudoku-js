@@ -14,32 +14,14 @@ module.exports = function Sudoku(sudokuGrid) {
     // TODO: Hanterar ej olösbara sudoku.
 
     //Private functions
-
-    var printSudokuGrid = function(grid) {
-        console.log("-------------------------");
-        for (var i = 0; i < grid.length; i++) {
-            var row = grid[i];
-            var rowString = "| ";
-            for (var j = 0; j < row.length; j++) {
-                var cell = row[j];
-                rowString += (cell + " ");
-                if ((j + 1) % 3 === 0) {
-                    rowString += "| ";
-                }
-            }
-            console.log(rowString);
-            if ((i + 1) % 3 === 0) {
-                console.log("-------------------------");
-            }
-        }
-    }
-
     var copyMatrix = function(matrixToCopy) {
         return matrixToCopy.map(function(row) {
             return row.slice();
         });
     }
 
+    // Returns false if 'value' is present in the grid on
+    // row 'row', otherwise false.
     var checkRow = function(grid, value, row) {
         for (var i = 0; i < sudokuSize; i++) {
           if(grid[row][i] === value) {
@@ -49,6 +31,8 @@ module.exports = function Sudoku(sudokuGrid) {
         return true;
     };
 
+    // Returns false if 'value' is present in the grid on
+    // column 'column', otherwise false.
     var checkColumn = function(grid, value, column) {
       for (var i = 0; i < sudokuSize; i++) {
         if(grid[i][column] === value) {
@@ -58,6 +42,8 @@ module.exports = function Sudoku(sudokuGrid) {
       return true;
     };
 
+    // Returns false if 'value' is present in the 3x3 square where
+    // ('row','column') belongs, otherwise false.
     var checkSquare = function(grid, value, row, column) {
         var squareCornerRow = row - row % squareSize;
         var squareCornerColumn = column - column % squareSize;
@@ -72,6 +58,9 @@ module.exports = function Sudoku(sudokuGrid) {
         return true;
     };
 
+    // Returns true if the insertion value 'value' in the grid on
+    // positon ('row','column') does not break any of the sudoku
+    // rules. Returns false otherwise.
     var checkGrid = function(grid, value, row, column) {
         var rowOk = checkRow(grid, value, row);
         var columnOk = checkColumn(grid, value, column);
@@ -79,23 +68,31 @@ module.exports = function Sudoku(sudokuGrid) {
         return rowOk && columnOk && squareOk;
     };
 
+    // Moves the recursive algorithm to the next position in the grid.
+    // Also saves the grid if solved and counts solutions.
     var solveNext = function(grid, row, column, requiredSulutions) {
         if (column === (sudokuSize - 1) && row === (sudokuSize - 1)) {
+            // A solution has been found.
             sudokuSolution = copyMatrix(sudokuGrid);
             foundSolutions++;
             return;
         }
         if (column < (sudokuSize - 1)) {
+            // Go to the next position in the same row.
             solveRecursion(grid, row, column + 1, requiredSulutions);
         } else {
+            // Go to a new row.
             solveRecursion(grid, row + 1, 0, requiredSulutions);
         }
     }
 
     var solveRecursion = function(grid, row, column, requiredSulutions) {
         if (sudokuGrid[row][column] !== 0) {
+            // The value on this position on the grid is given, move on.
             solveNext(grid, row, column, requiredSulutions);
         } else {
+            // The value on this position on the grid has to be
+            // found, find a suitable value.
             for (var val = 1; val <= sudokuSize; val++) {
                 if (checkGrid(grid, val, row, column) && foundSolutions < requiredSulutions) {
                     sudokuGrid[row][column] = val;
@@ -105,21 +102,18 @@ module.exports = function Sudoku(sudokuGrid) {
                     }
                 }
             }
+            // Algortihm is backtracking, reset the value on this position to 0.
             sudokuGrid[row][column] = 0;
         }
     };
 
-    //Public functions
+    // Public functions
     return {
-        printSolution: function() {
-            if (sudokuSolution === undefined) {
-                console.log("The sudoku has not been solved yet");
-            } else {
-                printSudokuGrid(sudokuSolution);
-            }
+        getSolution: function() {
+            return sudokuSolution;
         },
-        printOriginal: function() {
-            printSudokuGrid(sudokuGrid);
+        getOriginal: function() {
+            return sudokuGrid;
         },
         solve: function() {
             solveRecursion(sudokuGrid, 0, 0, 1);

@@ -31,12 +31,12 @@ fs.readFile(input_file_path, 'utf8', function(err, data) {
     var sudokuProblem = sudoku(grid);
 
     console.log("Original sudoku: ");
-    sudokuProblem.printOriginal();
+    printSudokuGrid(sudokuProblem.getOriginal());
     console.time("solve");
     var unique = sudokuProblem.solveAndVerifyUniqueSolution();
     console.timeEnd("solve");
     console.log("Solved sudoku: ");
-    sudokuProblem.printSolution();
+    printSudokuGrid(sudokuProblem.getSolution());
     console.log("Unique solution: " + (unique ? "yes" : "no"));
     console.log("Difficulty: " + sudokuProblem.difficulty());
 
@@ -62,4 +62,23 @@ var rowStringToArray = function(row) {
     }
 
     return res;
+}
+
+var printSudokuGrid = function(grid) {
+    console.log("-------------------------");
+    for (var i = 0; i < grid.length; i++) {
+        var row = grid[i];
+        var rowString = "| ";
+        for (var j = 0; j < row.length; j++) {
+            var cell = row[j];
+            rowString += (cell + " ");
+            if ((j + 1) % 3 === 0) {
+                rowString += "| ";
+            }
+        }
+        console.log(rowString);
+        if ((i + 1) % 3 === 0) {
+            console.log("-------------------------");
+        }
+    }
 }
