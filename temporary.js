@@ -1,6 +1,5 @@
 "use strict";
-
-var sudokuGenerator = require('./sudoku-generator.js');
+var sudoku = require('./sudoku.js');
 
 var printSudokuGrid = function(grid) {
     console.log("-------------------------");
@@ -21,5 +20,5 @@ var printSudokuGrid = function(grid) {
     }
 }
 
-var generatedSudoku = sudokuGenerator.generate();
+var generatedSudoku = sudoku.generate();
 printSudokuGrid(generatedSudoku);

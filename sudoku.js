@@ -107,31 +107,52 @@ module.exports = function Sudoku(sudokuGrid) {
         }
     };
 
+    var difficulty = function() {
+        if (backtracks < 1500) {
+            return "easy";
+        } else if (backtracks < 10000) {
+            return "medium";
+        } else if (backtracks < 50000) {
+            return "hard";
+        } else {
+            return "samurai"
+        }
+    };
+
     // Public functions
     return {
-        getSolution: function() {
-            return sudokuSolution;
-        },
-        getOriginal: function() {
-            return sudokuGrid;
-        },
         solve: function() {
             solveRecursion(sudokuGrid, 0, 0, 1);
+            var result;
+            if(sudokuSolution === undefined) {
+              result = {};
+            } else {
+              result = {
+                solution: copyMatrix(sudokuSolution),
+                difficulty: difficulty()
+              };
+            }
+            foundSolutions = 0;
+            backtracks = 0;
+            sudokuSolution = undefined;
+            return result;
         },
         solveAndVerifyUniqueSolution: function() {
             solveRecursion(sudokuGrid, 0, 0, 2);
-            return foundSolutions === 1;
-        },
-        difficulty: function() {
-            if (backtracks < 1500) {
-                return "easy";
-            } else if (backtracks < 10000) {
-                return "medium";
-            } else if (backtracks < 50000) {
-                return "hard";
+            var result;
+            if(sudokuSolution === undefined) {
+              result = {};
             } else {
-                return "samurai"
+              var result = {
+                solution: copyMatrix(sudokuSolution),
+                difficulty: difficulty(),
+                unique: foundSolutions === 1
+              };
             }
+            foundSolutions = 0;
+            backtracks = 0;
+            sudokuSolution = undefined;
+            return result;
         }
     };
 };

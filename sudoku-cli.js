@@ -2,7 +2,7 @@
 
 // ############# Requires ###############
 var fs = require('fs');
-var sudokuSolver = require('./sudoku-solver.js');
+var sudoku = require('./sudoku.js');
 
 // ############# Global vars ############
 var input_file_path = "";
@@ -28,17 +28,17 @@ fs.readFile(input_file_path, 'utf8', function(err, data) {
         process.exit(1);
     }
     var grid = rows.map(rowStringToArray);
-    var sudokuProblem = sudokuSolver(grid);
+    var sudokuProblem = sudoku(grid);
 
     console.log("Original sudoku: ");
-    printSudokuGrid(sudokuProblem.getOriginal());
+    printSudokuGrid(grid);
     console.time("solve");
-    var unique = sudokuProblem.solveAndVerifyUniqueSolution();
+    var result = sudokuProblem.solveAndVerifyUniqueSolution();
     console.timeEnd("solve");
     console.log("Solved sudoku: ");
-    printSudokuGrid(sudokuProblem.getSolution());
-    console.log("Unique solution: " + (unique ? "yes" : "no"));
-    console.log("Difficulty: " + sudokuProblem.difficulty());
+    printSudokuGrid(result.solution);
+    console.log("Unique solution: " + (result.unique ? "yes" : "no"));
+    console.log("Difficulty: " + result.difficulty);
 
 });
 
