@@ -1,7 +1,7 @@
 "use strict";
 module.exports = function Sudoku(sudokuGrid) {
 
-    //Private variables
+    // Private variables
     var sudokuSize = 9;
     var squareSize = 3;
     var foundSolutions = 0;
@@ -13,7 +13,7 @@ module.exports = function Sudoku(sudokuGrid) {
 
     // TODO: Hanterar ej olösbara sudoku.
 
-    //Private functions
+    // Private functions
     var copyMatrix = function(matrixToCopy) {
         return matrixToCopy.map(function(row) {
             return row.slice();

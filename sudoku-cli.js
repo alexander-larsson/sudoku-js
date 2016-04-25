@@ -2,7 +2,7 @@
 
 // ############# Requires ###############
 var fs = require('fs');
-var sudoku = require('./sudoku.js');
+var sudokuSolver = require('./sudoku-solver.js');
 
 // ############# Global vars ############
 var input_file_path = "";
@@ -28,7 +28,7 @@ fs.readFile(input_file_path, 'utf8', function(err, data) {
         process.exit(1);
     }
     var grid = rows.map(rowStringToArray);
-    var sudokuProblem = sudoku(grid);
+    var sudokuProblem = sudokuSolver(grid);
 
     console.log("Original sudoku: ");
     printSudokuGrid(sudokuProblem.getOriginal());
