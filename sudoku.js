@@ -8,17 +8,9 @@ module.exports = (function Sudoku() {
     var backtracks = 0;
     var sudokuSolution;
 
-    // TODO: Borde kolla om det finns några regelbrott i originalproblemet
-    // innan jag löser det.
-
-    // TODO: Hanterar ej olösbara sudoku.
-
     // ############# Private functions ##########
-    var copyMatrix = function(matrixToCopy) {
-        return matrixToCopy.map(function(row) {
-            return row.slice();
-        });
-    }
+
+    // ###### Sudoku solving ########
 
     // Returns false if 'value' is present in the grid on
     // row 'row', otherwise false.
@@ -138,6 +130,71 @@ module.exports = (function Sudoku() {
         }
     };
 
+
+
+    // ###### Sudoku generation #####
+
+    var generateEmptyGrid = function() {
+        var res = Array(9);
+        for (var i = 0; i < res.length; i++) {
+            res[i] = Array(9).fill(0);
+        }
+        return res;
+    }
+
+    var randomInt = function(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    var randomIndexInList = function(list) {
+      return randomInt(0, list.length - 1);
+    }
+
+    var generateListOfAllPositions = function() {
+        var res = []
+        for (var i = 0; i < sudokuSize; i++) {
+            for (var j = 0; j < sudokuSize; j++) {
+                res.push({
+                    row: i,
+                    column: j
+                });
+            }
+        }
+        return res;
+    }
+
+    // In-place shuffle based on Fisher–Yates shuffle
+    var shuffleList = function(list) {
+      for(var i = list.length; i > 0; i--){
+        var j = Math.floor(Math.random() * i);
+        i--;
+        var temp = list[i];
+        list[i] = list[j];
+        list[j] = temp;
+      }
+      return list
+    }
+
+    // Maybe I should keep lists of these for each position
+    // instead of calculating.
+    var validNumbersForPosition = function(grid, row, column) {
+        var validNumbers = [];
+        for (var i = 0; i <= sudokuSize; i++) {
+            if (checkGrid(grid, i, row, column)) {
+                validNumbers.push(i);
+            }
+        }
+        return validNumbers;
+    }
+
+    // ###### Other helpers #########
+
+    var copyMatrix = function(matrixToCopy) {
+        return matrixToCopy.map(function(row) {
+            return row.slice();
+        });
+    }
+
     var resetStates = function() {
         foundSolutions = 0;
         backtracks = 0;
@@ -147,8 +204,8 @@ module.exports = (function Sudoku() {
     // ############# Public functions ###########
     var solve = function(sudokuGrid) {
         var gridIsValid = verifyValidGrid(sudokuGrid);
-        if(gridIsValid){
-          solveRecursion(sudokuGrid, 0, 0, 1);
+        if (gridIsValid) {
+            solveRecursion(sudokuGrid, 0, 0, 1);
         }
         var result;
         if (!sudokuSolution || !gridIsValid) {
@@ -167,8 +224,8 @@ module.exports = (function Sudoku() {
 
     var solveAndVerifyUniqueSolution = function(sudokuGrid) {
         var gridIsValid = verifyValidGrid(sudokuGrid);
-        if(gridIsValid){
-          solveRecursion(sudokuGrid, 0, 0, 2);  
+        if (gridIsValid) {
+            solveRecursion(sudokuGrid, 0, 0, 2);
         }
         var result;
         if (!sudokuSolution || !gridIsValid) {
@@ -188,7 +245,32 @@ module.exports = (function Sudoku() {
 
 
     var generate = function() {
-        return "stuff";
+        var generatedSudoku = generateEmptyGrid();
+        var positionList = generateListOfAllPositions();
+
+        while(positionList.length > 0) {
+          console.log(positionList.length);
+          // Pick a random position and valid number for that position
+          var randomPositionIndex = randomIndexInList(positionList);
+          var randomPosition = positionList[randomPositionIndex];
+          var validNumbers = validNumbersForPosition(generatedSudoku, randomPosition.row, randomPosition.column);
+          var randomValidNumerPosition = randomIndexInList(validNumbers);
+          var randomValidNumber = validNumbers[randomValidNumerPosition];
+
+          // Add the number to the position
+          generatedSudoku[randomPosition.row][randomPosition.column] = randomValidNumber;
+          // Check so that the board has a valid solution
+          console.log(generatedSudoku);
+          var result = solve(generatedSudoku);
+          if(result.error) { // Has no valid solution
+            generatedSudoku[randomPosition.row][randomPosition.column] = 0;
+          } else { // Has valid solution
+            positionList.splice(randomPositionIndex, 1);
+          }
+
+        }
+
+        return generatedSudoku;
     };
 
     return {
