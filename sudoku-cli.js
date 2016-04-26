@@ -34,11 +34,14 @@ fs.readFile(input_file_path, 'utf8', function(err, data) {
     console.time("solve");
     var result = sudoku.solveAndVerifyUniqueSolution(grid);
     console.timeEnd("solve");
-    console.log("Solved sudoku: ");
-    printSudokuGrid(result.solution);
-    console.log("Unique solution: " + (result.unique ? "yes" : "no"));
-    console.log("Difficulty: " + result.difficulty);
-
+    if(result.error){
+      console.log(result.error);
+    } else {
+      console.log("Solved sudoku: ");
+      printSudokuGrid(result.solution);
+      console.log("Unique solution: " + (result.unique ? "yes" : "no"));
+      console.log("Difficulty: " + result.difficulty);
+    }
 });
 
 // ############# Helpers ################

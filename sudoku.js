@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (function Sudoku() {
 
-    // Private variables
+    // ############# Private variables ##########
     var sudokuSize = 9;
     var squareSize = 3;
     var foundSolutions = 0;
@@ -13,7 +13,7 @@ module.exports = (function Sudoku() {
 
     // TODO: Hanterar ej olösbara sudoku.
 
-    // Private functions
+    // ############# Private functions ##########
     var copyMatrix = function(matrixToCopy) {
         return matrixToCopy.map(function(row) {
             return row.slice();
@@ -24,9 +24,9 @@ module.exports = (function Sudoku() {
     // row 'row', otherwise false.
     var checkRow = function(grid, value, row) {
         for (var i = 0; i < sudokuSize; i++) {
-          if(grid[row][i] === value) {
-            return false;
-          }
+            if (grid[row][i] === value) {
+                return false;
+            }
         }
         return true;
     };
@@ -34,12 +34,12 @@ module.exports = (function Sudoku() {
     // Returns false if 'value' is present in the grid on
     // column 'column', otherwise false.
     var checkColumn = function(grid, value, column) {
-      for (var i = 0; i < sudokuSize; i++) {
-        if(grid[i][column] === value) {
-          return false;
+        for (var i = 0; i < sudokuSize; i++) {
+            if (grid[i][column] === value) {
+                return false;
+            }
         }
-      }
-      return true;
+        return true;
     };
 
     // Returns false if 'value' is present in the 3x3 square where
@@ -67,6 +67,25 @@ module.exports = (function Sudoku() {
         var squareOk = checkSquare(grid, value, row, column);
         return rowOk && columnOk && squareOk;
     };
+
+    // Returns true if the grid does not break the sudoku rules.
+    var verifyValidGrid = function(grid) {
+        for (var i = 0; i < sudokuSize; i++) {
+            for (var j = 0; j < sudokuSize; j++) {
+                if (grid[i][j] !== 0) {
+                    var currentValue = grid[i][j];
+                    grid[i][j] = 0;
+                    var currentValueOk = checkGrid(grid, currentValue, i, j);
+                    grid[i][j] = currentValue;
+                    if (!currentValueOk) {
+                        return false;
+                    }
+                }
+
+            }
+        }
+        return true;
+    }
 
     // Moves the recursive algorithm to the next position in the grid.
     // Also saves the grid if solved and counts solutions.
@@ -119,43 +138,62 @@ module.exports = (function Sudoku() {
         }
     };
 
-    // Public functions
-    return {
-        solve: function(sudokuGrid) {
-            solveRecursion(sudokuGrid, 0, 0, 1);
-            var result;
-            if(!sudokuSolution) {
-              result = null;
-            } else {
-              result = {
+    var resetStates = function() {
+        foundSolutions = 0;
+        backtracks = 0;
+        sudokuSolution = null;
+    };
+
+    // ############# Public functions ###########
+    var solve = function(sudokuGrid) {
+        var gridIsValid = verifyValidGrid(sudokuGrid);
+        if(gridIsValid){
+          solveRecursion(sudokuGrid, 0, 0, 1);
+        }
+        var result;
+        if (!sudokuSolution || !gridIsValid) {
+            result = {
+                error: "The sudoku could not be solved"
+            };
+        } else {
+            result = {
                 solution: copyMatrix(sudokuSolution),
                 difficulty: difficulty()
-              };
-            }
-            foundSolutions = 0;
-            backtracks = 0;
-            sudokuSolution = null;
-            return result;
-        },
-        solveAndVerifyUniqueSolution: function(sudokuGrid) {
-            solveRecursion(sudokuGrid, 0, 0, 2);
-            var result;
-            if(!sudokuSolution) {
-              result = null;
-            } else {
-              var result = {
+            };
+        }
+        resetStates()
+        return result;
+    };
+
+    var solveAndVerifyUniqueSolution = function(sudokuGrid) {
+        var gridIsValid = verifyValidGrid(sudokuGrid);
+        if(gridIsValid){
+          solveRecursion(sudokuGrid, 0, 0, 2);  
+        }
+        var result;
+        if (!sudokuSolution || !gridIsValid) {
+            result = {
+                error: "The sudoku could not be solved"
+            };
+        } else {
+            var result = {
                 solution: copyMatrix(sudokuSolution),
                 difficulty: difficulty(),
                 unique: foundSolutions === 1
-              };
-            }
-            foundSolutions = 0;
-            backtracks = 0;
-            sudokuSolution = null;
-            return result;
-        },
-        generate: function(){
-          return "stuff";
+            };
         }
+        resetStates()
+        return result;
+    };
+
+
+    var generate = function() {
+        return "stuff";
+    };
+
+    return {
+        solve: solve,
+        solveAndVerifyUniqueSolution: solveAndVerifyUniqueSolution,
+        generate: generate
     };
 })();
