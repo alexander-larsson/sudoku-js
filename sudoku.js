@@ -6,6 +6,8 @@ module.exports = (function Sudoku() {
     var squareSize = 3;
     var foundSolutions = 0;
     var backtracks = 0;
+    var recursionSteps = 0;
+    var maxRecursionSteps = 300000; // Consider impossible if more than this
     var sudokuSolution;
 
     // ############# Private functions ##########
@@ -98,6 +100,7 @@ module.exports = (function Sudoku() {
     }
 
     var solveRecursion = function(grid, row, column, requiredSulutions) {
+        recursionSteps++;
         if (grid[row][column] !== 0) {
             // The value on this position on the grid is given, move on.
             solveNext(grid, row, column, requiredSulutions);
@@ -105,7 +108,10 @@ module.exports = (function Sudoku() {
             // The value on this position on the grid has to be
             // found, find a suitable value.
             for (var val = 1; val <= sudokuSize; val++) {
-                if (checkGrid(grid, val, row, column) && foundSolutions < requiredSulutions) {
+                var valIsValid = checkGrid(grid, val, row, column);
+                var enoughSolutions = foundSolutions < requiredSulutions;
+                var giveUp = recursionSteps >= maxRecursionSteps;
+                if (valIsValid && enoughSolutions && !giveUp) {
                     grid[row][column] = val;
                     solveNext(grid, row, column, requiredSulutions);
                     if (foundSolutions < 1) {
@@ -199,6 +205,7 @@ module.exports = (function Sudoku() {
         foundSolutions = 0;
         backtracks = 0;
         sudokuSolution = null;
+        recursionSteps = 0;
     };
 
     // ############# Public functions ###########
@@ -249,7 +256,6 @@ module.exports = (function Sudoku() {
         var positionList = generateListOfAllPositions();
 
         while(positionList.length > 0) {
-          console.log(positionList.length);
           // Pick a random position and valid number for that position
           var randomPositionIndex = randomIndexInList(positionList);
           var randomPosition = positionList[randomPositionIndex];
@@ -260,7 +266,6 @@ module.exports = (function Sudoku() {
           // Add the number to the position
           generatedSudoku[randomPosition.row][randomPosition.column] = randomValidNumber;
           // Check so that the board has a valid solution
-          console.log(generatedSudoku);
           var result = solve(generatedSudoku);
           if(result.error) { // Has no valid solution
             generatedSudoku[randomPosition.row][randomPosition.column] = 0;

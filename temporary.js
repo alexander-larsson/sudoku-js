@@ -20,6 +20,7 @@ var printSudokuGrid = function(grid) {
     }
 }
 
+// Impossible to solve example
 var x = [ [ 4, 0, 0, 0, 0, 0, 0, 6, 0 ],
   [ 0, 0, 0, 0, 7, 0, 0, 3, 0 ],
   [ 0, 0, 0, 0, 3, 0, 0, 0, 0 ],
@@ -31,5 +32,5 @@ var x = [ [ 4, 0, 0, 0, 0, 0, 0, 6, 0 ],
   [ 0, 1, 0, 0, 0, 0, 7, 0, 6 ] ]
 
 
-var generatedSudoku = sudoku.solve(x);
-printSudokuGrid(generatedSudoku.solution);
+var generatedSudoku = sudoku.generate();
+printSudokuGrid(generatedSudoku);
