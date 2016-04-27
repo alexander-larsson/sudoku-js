@@ -84,5 +84,7 @@ var generated = [ [ 0, 5, 0, 0, 9, 0, 1, 0, 0 ],
 //var res = sudoku.solveAndVerifyUniqueSolution(generated5);
 //console.log(res.difficulty);
 
+console.time("generate");
 var generatedSudoku = sudoku.generate();
+console.timeEnd("generate");
 printSudokuGrid(generatedSudoku);
