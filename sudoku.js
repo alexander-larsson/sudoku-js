@@ -1,14 +1,16 @@
 "use strict";
 module.exports = (function Sudoku() {
 
-    // ############# Private variables ##########
+    // ############# Constant values ############
     var sudokuSize = 9;
     var squareSize = 3;
+    var maxRecursionSteps = 300000; // Consider impossible if more than this
+
+    // ############# Private variables ##########
     var foundSolutions = 0;
     var backtracks = 0;
     var recursionSteps = 0;
-    var maxRecursionSteps = 300000; // Consider impossible if more than this
-    var sudokuSolution;
+    var sudokuSolution = null;
 
     // ############# Private functions ##########
 
@@ -252,6 +254,8 @@ module.exports = (function Sudoku() {
 
 
     var generate = function() {
+
+        // First, generate a full valid sudoku board
         var generatedSudoku = generateEmptyGrid();
         var positionList = generateListOfAllPositions();
 
@@ -263,10 +267,13 @@ module.exports = (function Sudoku() {
           var randomValidNumerPosition = randomIndexInList(validNumbers);
           var randomValidNumber = validNumbers[randomValidNumerPosition];
 
+          // My linter doesn't like 'let' :(
+          var result;
+
           // Add the number to the position
           generatedSudoku[randomPosition.row][randomPosition.column] = randomValidNumber;
           // Check so that the board has a valid solution
-          var result = solve(generatedSudoku);
+          result = solve(generatedSudoku);
           if(result.error) { // Has no valid solution
             generatedSudoku[randomPosition.row][randomPosition.column] = 0;
           } else { // Has valid solution
@@ -275,6 +282,23 @@ module.exports = (function Sudoku() {
 
         }
 
+        // We now have a full board remove as many values as possible
+
+        // Refill the positionList and shuffle it
+        positionList = generateListOfAllPositions();
+        shuffleList(positionList);
+
+        // Go through the list and remove the value at as many positions
+        // as possible.
+        for (var i = 0; i < positionList.length; i++) {
+          var currentPosition = positionList[i];
+          var currentPositionValue = generatedSudoku[currentPosition.row][currentPosition.column];
+          generatedSudoku[currentPosition.row][currentPosition.column] = 0;
+          result = solveAndVerifyUniqueSolution(generatedSudoku);
+          if(!result.unique) {
+            generatedSudoku[currentPosition.row][currentPosition.column] = currentPositionValue;
+          }
+        }
         return generatedSudoku;
     };
 
