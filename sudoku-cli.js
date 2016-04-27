@@ -70,9 +70,9 @@ if(process.argv[2] === "solve" && process.argv.length === 4){
 
       console.log("Original sudoku: ");
       printSudokuGrid(grid);
-      console.time("solve");
+      //console.time("solve");
       var result = sudoku.solveAndVerifyUniqueSolution(grid);
-      console.timeEnd("solve");
+      //console.timeEnd("solve");
       if(result.error){
         console.log(result.error);
       } else {

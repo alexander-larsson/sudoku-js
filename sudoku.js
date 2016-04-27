@@ -99,7 +99,7 @@ module.exports = (function Sudoku() {
 
     // Moves the recursive algorithm to the next position in the grid.
     // Also saves the grid if solved and counts solutions.
-    var solveNext = function(grid, row, column, requiredSulutions) {
+    var solveNext = function(grid, row, column, requiredSolutions) {
         if (column === (sudokuSize - 1) && row === (sudokuSize - 1)) {
             // A solution has been found.
             sudokuSolution = copyMatrix(grid);
@@ -108,29 +108,29 @@ module.exports = (function Sudoku() {
         }
         if (column < (sudokuSize - 1)) {
             // Go to the next position in the same row.
-            solveRecursion(grid, row, column + 1, requiredSulutions);
+            solveRecursion(grid, row, column + 1, requiredSolutions);
         } else {
             // Go to a new row.
-            solveRecursion(grid, row + 1, 0, requiredSulutions);
+            solveRecursion(grid, row + 1, 0, requiredSolutions);
         }
     };
 
     // Recursive sudoku solving algorithm
-    var solveRecursion = function(grid, row, column, requiredSulutions) {
+    var solveRecursion = function(grid, row, column, requiredSolutions) {
         recursionSteps++;
         if (grid[row][column] !== 0) {
             // The value on this position on the grid is given, move on.
-            solveNext(grid, row, column, requiredSulutions);
+            solveNext(grid, row, column, requiredSolutions);
         } else {
             // The value on this position on the grid has to be
             // found, find a suitable value.
             for (var val = 1; val <= sudokuSize; val++) {
                 var valIsValid = checkGrid(grid, val, row, column);
-                var enoughSolutions = foundSolutions < requiredSulutions;
+                var enoughSolutions = foundSolutions < requiredSolutions;
                 var giveUp = recursionSteps >= maxRecursionSteps;
                 if (valIsValid && enoughSolutions && !giveUp) {
                     grid[row][column] = val;
-                    solveNext(grid, row, column, requiredSulutions);
+                    solveNext(grid, row, column, requiredSolutions);
                     if (foundSolutions < 1) {
                         backtracks++;
                     }
