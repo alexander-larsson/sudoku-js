@@ -2,10 +2,9 @@
 module.exports = (function Sudoku() {
 
     // ############# Constant values ############
-    // My linter doesnt like 'const' :(
-    var sudokuSize = 9;
-    var squareSize = 3;
-    var maxRecursionSteps = 300000; // Consider impossible if more than this
+    const sudokuSize = 9;
+    const squareSize = 3;
+    const maxRecursionSteps = 300000; // Consider impossible if more than this
 
     // ############# Private variables ##########
     var foundSolutions = 0;
@@ -286,12 +285,11 @@ module.exports = (function Sudoku() {
           var validNumbers = validNumbersForPosition(generatedSudoku, randomPosition.row, randomPosition.column);
           var randomValidNumerPosition = randomIndexInList(validNumbers);
           var randomValidNumber = validNumbers[randomValidNumerPosition];
-          var result; // My linter doesn't like 'let' :(
 
           // Add the number to the position
           generatedSudoku[randomPosition.row][randomPosition.column] = randomValidNumber;
           // Check so that the board has a valid solution
-          result = solve(generatedSudoku);
+          let result = solve(generatedSudoku);
           if(result.error) { // Has no valid solution
             generatedSudoku[randomPosition.row][randomPosition.column] = 0;
           } else { // Has valid solution
@@ -314,7 +312,7 @@ module.exports = (function Sudoku() {
           generatedSudoku[currentPosition.row][currentPosition.column] = 0;
 
           // If there is no unique solution without the value, put it back
-          result = solveAndVerifyUniqueSolution(generatedSudoku);
+          let result = solveAndVerifyUniqueSolution(generatedSudoku);
           if(!result.unique) {
             generatedSudoku[currentPosition.row][currentPosition.column] = currentPositionValue;
           }
