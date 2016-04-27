@@ -1,8 +1,8 @@
 {
-  "name": "qlik-js-sudoku",
+  "name": "sudoku-js",
   "version": "1.0.0",
   "description": "An implementation of a sudoku solver and generator",
-  "main": "app.js",
+  "main": "sudoku-cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
