@@ -2,6 +2,7 @@
 module.exports = (function Sudoku() {
 
     // ############# Constant values ############
+    // My linter doesnt like 'const' :(
     var sudokuSize = 9;
     var squareSize = 3;
     var maxRecursionSteps = 300000; // Consider impossible if more than this
@@ -64,6 +65,19 @@ module.exports = (function Sudoku() {
         return rowOk && columnOk && squareOk;
     };
 
+    // Verifies that the grid is the right size
+    var verifyValidGridSize = function(grid) {
+      if(grid.length !== sudokuSize){
+        return false;
+      }
+      for (var i = 0; i < grid.length; i++) {
+        if(grid[i].length !== sudokuSize){
+          return false;
+        }
+      }
+      return true;
+    };
+
     // Returns true if the grid does not break the sudoku rules.
     var verifyValidGrid = function(grid) {
         for (var i = 0; i < sudokuSize; i++) {
@@ -81,7 +95,7 @@ module.exports = (function Sudoku() {
             }
         }
         return true;
-    }
+    };
 
     // Moves the recursive algorithm to the next position in the grid.
     // Also saves the grid if solved and counts solutions.
@@ -99,8 +113,9 @@ module.exports = (function Sudoku() {
             // Go to a new row.
             solveRecursion(grid, row + 1, 0, requiredSulutions);
         }
-    }
+    };
 
+    // Recursive sudoku solving algorithm
     var solveRecursion = function(grid, row, column, requiredSulutions) {
         recursionSteps++;
         if (grid[row][column] !== 0) {
@@ -150,6 +165,7 @@ module.exports = (function Sudoku() {
         return res;
     }
 
+    // Generate random integer, both min and max is inclusive
     var randomInt = function(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
@@ -181,10 +197,9 @@ module.exports = (function Sudoku() {
         list[j] = temp;
       }
       return list
-    }
+    };
 
-    // Maybe I should keep lists of these for each position
-    // instead of calculating.
+    // Get all valid values for position ('row','column')
     var validNumbersForPosition = function(grid, row, column) {
         var validNumbers = [];
         for (var i = 0; i <= sudokuSize; i++) {
@@ -193,7 +208,7 @@ module.exports = (function Sudoku() {
             }
         }
         return validNumbers;
-    }
+    };
 
     // ###### Other helpers #########
 
@@ -201,7 +216,7 @@ module.exports = (function Sudoku() {
         return matrixToCopy.map(function(row) {
             return row.slice();
         });
-    }
+    };
 
     var resetStates = function() {
         foundSolutions = 0;
@@ -211,8 +226,10 @@ module.exports = (function Sudoku() {
     };
 
     // ############# Public functions ###########
+
+    // Solves the sudoku, doesn't verify unique
     var solve = function(sudokuGrid) {
-        var gridIsValid = verifyValidGrid(sudokuGrid);
+        var gridIsValid = verifyValidGridSize(sudokuGrid) && verifyValidGrid(sudokuGrid);
         if (gridIsValid) {
             solveRecursion(sudokuGrid, 0, 0, 1);
         }
@@ -231,8 +248,9 @@ module.exports = (function Sudoku() {
         return result;
     };
 
+    // Solves the sudoku and verifies that it is unique
     var solveAndVerifyUniqueSolution = function(sudokuGrid) {
-        var gridIsValid = verifyValidGrid(sudokuGrid);
+        var gridIsValid = verifyValidGridSize(sudokuGrid) && verifyValidGrid(sudokuGrid);
         if (gridIsValid) {
             solveRecursion(sudokuGrid, 0, 0, 2);
         }
@@ -253,12 +271,14 @@ module.exports = (function Sudoku() {
     };
 
 
+    // Generates a random sudoku
     var generate = function() {
 
         // First, generate a full valid sudoku board
         var generatedSudoku = generateEmptyGrid();
         var positionList = generateListOfAllPositions();
 
+        // Repeat until all positions has a value
         while(positionList.length > 0) {
           // Pick a random position and valid number for that position
           var randomPositionIndex = randomIndexInList(positionList);
@@ -266,9 +286,7 @@ module.exports = (function Sudoku() {
           var validNumbers = validNumbersForPosition(generatedSudoku, randomPosition.row, randomPosition.column);
           var randomValidNumerPosition = randomIndexInList(validNumbers);
           var randomValidNumber = validNumbers[randomValidNumerPosition];
-
-          // My linter doesn't like 'let' :(
-          var result;
+          var result; // My linter doesn't like 'let' :(
 
           // Add the number to the position
           generatedSudoku[randomPosition.row][randomPosition.column] = randomValidNumber;
@@ -294,6 +312,8 @@ module.exports = (function Sudoku() {
           var currentPosition = positionList[i];
           var currentPositionValue = generatedSudoku[currentPosition.row][currentPosition.column];
           generatedSudoku[currentPosition.row][currentPosition.column] = 0;
+
+          // If there is no unique solution without the value, put it back
           result = solveAndVerifyUniqueSolution(generatedSudoku);
           if(!result.unique) {
             generatedSudoku[currentPosition.row][currentPosition.column] = currentPositionValue;

@@ -24,8 +24,8 @@ fs.readFile(input_file_path, 'utf8', function(err, data) {
 
     var rows = data.split(/\r?\n/).splice(0, 9);
     if (rows.length !== 9) {
-        console.log("Invalid file format, not enough rows");
-        process.exit(1);
+         console.log("Invalid file format, not enough rows");
+         process.exit(1);
     }
     var grid = rows.map(rowStringToArray);
 
